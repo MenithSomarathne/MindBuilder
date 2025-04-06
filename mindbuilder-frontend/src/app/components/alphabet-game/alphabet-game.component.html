@@ -1,0 +1,26 @@
+<div class="game-container">
+  <h1>Alphabet Learning Game</h1>
+
+  <div class="score-board">
+    <p>Score: {{ score }}</p>
+  </div>
+
+  <div class="current-letter">
+    <h2>{{ message }}</h2>
+  </div>
+
+  <div class="alphabet-grid">
+    <button
+      *ngFor="let letter of alphabet"
+      (click)="onLetterClick(letter)"
+      class="letter-button"
+      [class.correct]="letter === currentLetter"
+    >
+      {{ showUppercase ? letter : letter.toLowerCase() }}
+    </button>
+  </div>
+
+  <button (click)="toggleCase()" class="toggle-button">
+    {{ showUppercase ? 'Show Lowercase' : 'Show Uppercase' }}
+  </button>
+</div>

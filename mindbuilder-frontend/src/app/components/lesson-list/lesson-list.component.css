@@ -1,0 +1,69 @@
+/* src/app/components/lesson-list/lesson-list.component.css */
+/* Hover effects */
+.add-lesson-btn:hover {
+  background-color: #1e7a9c !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(37, 150, 190, 0.3);
+}
+
+.lesson-row:hover {
+  background-color: #f8f9fa !important;
+}
+
+.edit-btn:hover {
+  background-color: #2596be !important;
+  color: white !important;
+}
+
+.delete-btn:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+.cancel-btn:hover {
+  background-color: #f8f9fa !important;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #1e7a9c !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(37, 150, 190, 0.3);
+}
+
+.delete-confirm-btn:hover {
+  background-color: #c82333 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* Disabled state */
+.submit-btn:disabled {
+  background-color: #a0d1e6 !important;
+  cursor: not-allowed;
+}
+
+/* Focus states */
+.search-input:focus,
+.filter-select:focus,
+.form-control:focus,
+.form-select:focus {
+  border-color: #2596be !important;
+  box-shadow: 0 0 0 2px rgba(37, 150, 190, 0.2) !important;
+}
+
+quill-editor {
+  min-height: 150px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+}
+
+label {
+  font-weight: bold;
+  margin-right: 10px;
+  white-space: nowrap;
+}
+

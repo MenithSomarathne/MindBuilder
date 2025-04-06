@@ -1,0 +1,181 @@
+<div class="container mx-auto px-4 py-6">
+  <!-- Header with Gradient Background -->
+  <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-6 mb-8 shadow-lg">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold text-white">Lessons Dashboard</h1>
+        <p class="text-indigo-100 mt-1">Manage all lessons in one place</p>
+      </div>
+
+      <!-- Search and Filters with Glass Morphism Effect -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 w-full md:w-auto">
+        <div class="flex flex-col sm:flex-row gap-3">
+          <!-- Search Input -->
+          <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="bi bi-search text-white/70"></i>
+            </div>
+            <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
+                   class="block w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                   placeholder="Search lessons...">
+          </div>
+
+          <!-- Status Filter -->
+          <select [(ngModel)]="selectedStatus" (ngModelChange)="onStatusChange()"
+                  class="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent">
+            <option value="all" class="bg-gray-800">All Statuses</option>
+            <option *ngFor="let option of statusOptions" [value]="option.value" class="bg-gray-800">{{option.label}}</option>
+          </select>
+
+          <!-- Difficulty Filter -->
+          <select [(ngModel)]="selectedDifficulty" (ngModelChange)="onDifficultyChange()"
+                  class="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent">
+            <option value="all" class="bg-gray-800">All Levels</option>
+            <option *ngFor="let option of difficultyOptions" [value]="option.value" class="bg-gray-800">{{option.label}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards with Hover Effects -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+    <!-- Total Lessons -->
+    <div class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-sm font-medium uppercase tracking-wider">Total Lessons</p>
+          <h3 class="text-3xl font-bold mt-1">{{lessons.length + adminLessons.length}}</h3>
+        </div>
+        <div class="p-3 rounded-lg bg-white/20 text-white">
+          <i class="bi bi-journal-bookmark text-2xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Lessons -->
+    <div class="bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-sm font-medium uppercase tracking-wider">Active Lessons</p>
+          <h3 class="text-3xl font-bold mt-1">{{activeLessonsCount}}</h3>
+        </div>
+        <div class="p-3 rounded-lg bg-white/20 text-white">
+          <i class="bi bi-check-circle text-2xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Free Lessons -->
+    <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-sm font-medium uppercase tracking-wider">Free Lessons</p>
+          <h3 class="text-3xl font-bold mt-1">{{freeLessonsCount}}</h3>
+        </div>
+        <div class="p-3 rounded-lg bg-white/20 text-white">
+          <i class="bi bi-gift text-2xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popular Lesson -->
+    <div class="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-sm font-medium uppercase tracking-wider">Most Popular</p>
+          <h3 class="text-3xl font-bold mt-1">{{getMostPopularLesson()?.viewCount || 0}}</h3>
+          <p class="text-sm mt-1">{{getMostPopularLesson()?.title || 'No views yet'}}</p>
+        </div>
+        <div class="p-3 rounded-lg bg-white/20 text-white">
+          <i class="bi bi-fire text-2xl"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sections with Floating Headers -->
+  <div class="space-y-10">
+    <!-- Teacher Lessons Section -->
+    <div class="relative group">
+      <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 via-teal-400 to-cyan-500 rounded-lg blur opacity-30 group-hover:opacity-80 transition duration-300"></div>
+      <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <!-- Section Header -->
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-blue-100 via-teal-100 to-cyan-100 dark:from-blue-900/50 dark:via-teal-900/50 dark:to-cyan-900/50">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <i class="bi bi-person-video2 text-blue-700 dark:text-blue-400"></i>
+            Teacher Lessons
+          </h2>
+          <button class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white rounded-lg transition-all flex items-center gap-2 shadow-md hover:shadow-lg">
+            <i class="bi bi-plus-lg"></i>
+            <span class="hidden sm:inline">Create New</span>
+          </button>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6">
+          <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500"></div>
+          </div>
+
+          <div *ngIf="!isLoading">
+            <div *ngIf="filteredLessons.length === 0" class="text-center py-12">
+              <div class="mx-auto w-24 h-24 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 rounded-full flex items-center justify-center mb-4">
+                <i class="bi bi-journal-x text-4xl text-gray-500 dark:text-gray-400"></i>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">No lessons found</h3>
+              <p class="mt-2 text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+                Try adjusting your search or filter to find what you're looking for.
+              </p>
+              <button class="mt-6 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white rounded-lg transition-colors shadow-md">
+                Create Your First Lesson
+              </button>
+            </div>
+
+            <div *ngIf="filteredLessons.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <app-lesson-card *ngFor="let lesson of filteredLessons" [lesson]="lesson"></app-lesson-card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Admin Lessons Section -->
+    <div class="relative group">
+      <div class="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
+      <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-100 dark:border-gray-700">
+        <!-- Section Header -->
+        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30">
+          <h2 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+            <i class="bi bi-building text-purple-600 dark:text-purple-400"></i>
+            MindBuilder Lessons
+          </h2>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6">
+          <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+          </div>
+
+          <div *ngIf="!isLoading">
+            <div *ngIf="adminFilteredLessons.length === 0" class="text-center py-12">
+              <div class="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                <i class="bi bi-journal-x text-4xl text-gray-400"></i>
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 dark:text-white">No lessons found</h3>
+              <p class="mt-2 text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+                Try adjusting your search or filter to find what you're looking for.
+              </p>
+            </div>
+
+            <div *ngIf="adminFilteredLessons.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <app-lesson-card *ngFor="let lesson of adminFilteredLessons" [lesson]="lesson"></app-lesson-card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

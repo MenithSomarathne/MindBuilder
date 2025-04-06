@@ -1,0 +1,25 @@
+<div class="game-container">
+  <!-- Alphabet Game -->
+  <app-alphabet-game *ngIf="gameId === 1"></app-alphabet-game>
+
+  <!-- Number Game -->
+  <app-number-game *ngIf="gameId === 2"></app-number-game>
+
+  <!-- Color Game -->
+  <app-color-game *ngIf="gameId === 3"></app-color-game>
+
+  <!-- Animal Game -->
+  <app-animal-game *ngIf="gameId === 4"></app-animal-game>
+
+  <!-- Shape Game -->
+  <app-shape-game *ngIf="gameId === 5"></app-shape-game>
+
+  <!-- Memory Game -->
+  <app-memory-game *ngIf="gameId === 6"></app-memory-game>
+
+  <!-- Default message if no game matches -->
+  <div *ngIf="gameId < 1 || gameId > 6" class="no-game-message">
+    <h2>Game not found!</h2>
+    <p>Please select a valid game from the menu.</p>
+  </div>
+</div>

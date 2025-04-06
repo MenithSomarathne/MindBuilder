@@ -1,0 +1,27 @@
+<div class="game-container">
+  <h1>Memory Game</h1>
+
+  <div class="game-info">
+    <p>Moves: {{ moves }}</p>
+    <p>Matches: {{ matches }} / {{ emojis.length }}</p>
+    <button (click)="initGame()" class="reset-button">New Game</button>
+  </div>
+
+  <div *ngIf="gameComplete" class="game-complete">
+    <h2>Congratulations! 🎉</h2>
+    <p>You completed the game in {{ moves }} moves!</p>
+  </div>
+
+  <div class="memory-grid">
+    <div
+      *ngFor="let card of cards"
+      (click)="flipCard(card)"
+      class="memory-card"
+      [class.flipped]="card.flipped"
+      [class.matched]="card.matched"
+    >
+      <div class="card-front">?</div>
+      <div class="card-back">{{ card.value }}</div>
+    </div>
+  </div>
+</div>

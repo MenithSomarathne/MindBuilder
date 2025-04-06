@@ -1,0 +1,199 @@
+<div class="iq-game-container" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4 p-3" style="background-color: #f8f9fa; border-radius: 8px;">
+    <h2 style="color: #343a40; margin: 0; font-weight: 600;">IQ Game Management</h2>
+    <button class="add-game-btn" (click)="openAddModal(gameModal)" style="background-color: #2596be; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 500; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
+      <i class="bi bi-plus-circle"></i> Add Game
+    </button>
+  </div>
+
+  <!-- Card Container -->
+  <div class="card-container" style="background-color: white; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); overflow: hidden;">
+    <!-- Card Header with Search and Filter -->
+    <div class="card-header" style="padding: 16px; border-bottom: 1px solid #e9ecef; background-color: white;">
+      <div class="row" style="display: flex; flex-wrap: wrap; margin: -8px;">
+        <div class="search-col" style="flex: 1; min-width: 200px; padding: 8px;">
+          <input type="text" class="search-input" placeholder="Search games..." [(ngModel)]="searchText" name="searchText" (input)="applyFilter()" style="width: 100%; padding: 8px 12px; border: 1px solid #e9ecef; border-radius: 6px; color: #343a40; outline: none; transition: border 0.2s;">
+        </div>
+        <div class="filter-col" style="flex: 0 0 auto; padding: 8px;">
+          <select class="filter-select" [(ngModel)]="filterBy" name="filterBy" (change)="applyFilter()" style="padding: 8px 12px; border: 1px solid #e9ecef; border-radius: 6px; color: #343a40; outline: none; cursor: pointer;">
+            <option value="all">All Games</option>
+            <option *ngFor="let level of difficultyLevels" [value]="level">{{level}} Games</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="card-body" style="padding: 0;">
+      <div class="table-responsive" style="overflow-x: auto;">
+        <table class="game-table" style="width: 100%; border-collapse: collapse;">
+          <thead style="background-color: #f8f9fa;">
+          <tr>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">ID</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Title</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Teacher</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Difficulty</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Lessons</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Results</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let game of filteredGames" style="border-bottom: 1px solid #e9ecef; transition: background-color 0.2s;" class="game-row">
+            <td style="padding: 12px 16px; color: #343a40;">{{ game.gameId }}</td>
+            <td style="padding: 12px 16px; color: #343a40;">{{ game.title }}</td>
+            <td style="padding: 12px 16px; color: #2596be;">{{ game.teacherName }} (ID: {{ game.teacherId }})</td>
+            <td style="padding: 12px 16px; color: #343a40;">
+              <span class="badge" [ngClass]="{
+                'bg-success': game.difficultyLevel === 'Easy',
+                'bg-warning': game.difficultyLevel === 'Medium',
+                'bg-danger': game.difficultyLevel === 'Hard',
+                'bg-dark': game.difficultyLevel === 'Expert'
+              }" style="padding: 4px 8px; border-radius: 4px; color: white;">
+                {{ game.difficultyLevel }}
+              </span>
+            </td>
+            <td style="padding: 12px 16px; color: #343a40;">{{ game.lessonIds.length || 0 }}</td>
+            <td style="padding: 12px 16px; color: #343a40;">{{ game.resultIds.length || 0 }}</td>
+            <td style="padding: 12px 16px;">
+              <div class="action-buttons" style="display: flex; gap: 8px;">
+                <button class="edit-btn" (click)="openEditModal(gameModal, game)" style="background-color: transparent; border: 1px solid #2596be; color: #2596be; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px;">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="delete-btn" (click)="confirmDelete(deleteModal, game.gameId)" style="background-color: transparent; border: 1px solid #dc3545; color: #dc3545; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px;">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="filteredGames.length === 0">
+            <td colspan="7" style="padding: 24px 16px; text-align: center; color: #6c757d;">No games found</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Modal Template -->
+<ng-template #gameModal let-modal>
+  <div class="modal-container" style="background-color: white; border-radius: 10px; max-width: 800px; width: 100%;">
+    <div class="modal-header" style="padding: 16px; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center;">
+      <h5 class="modal-title" style="margin: 0; color: #343a40; font-weight: 600;">{{ isEditMode ? 'Edit' : 'Add' }} IQ Game</h5>
+      <button type="button" class="close-btn" (click)="modal.dismiss()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6c757d;">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 16px;">
+      <form [formGroup]="gameForm" (ngSubmit)="onSubmit()">
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" style="display: block; margin-bottom: 6px; color: #343a40; font-weight: 500;">Teacher</label>
+          <select class="form-select" formControlName="teacherId" style="width: 100%; padding: 8px 12px; border: 1px solid #e9ecef; border-radius: 6px; color: #343a40; outline: none; cursor: pointer;">
+            <option value="">Select Teacher</option>
+            <option *ngFor="let teacher of teachers" [value]="teacher.id">
+              {{ teacher.name }} (ID: {{ teacher.id }})
+            </option>
+          </select>
+          <small *ngIf="gameForm.get('teacherId')?.invalid && gameForm.get('teacherId')?.touched" class="text-danger">
+            Please select a teacher
+          </small>
+        </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" style="display: block; margin-bottom: 6px; color: #343a40; font-weight: 500;">Title</label>
+          <input type="text" class="form-control" formControlName="title" style="width: 100%; padding: 8px 12px; border: 1px solid #e9ecef; border-radius: 6px; color: #343a40; outline: none;">
+          <small *ngIf="gameForm.get('title')?.invalid && gameForm.get('title')?.touched" class="text-danger">
+            Title is required
+          </small>
+        </div>
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label class="form-label" style="display: block; margin-bottom: 6px; color: #343a40; font-weight: 500;">Difficulty Level</label>
+          <select class="form-select" formControlName="difficultyLevel" style="width: 100%; padding: 8px 12px; border: 1px solid #e9ecef; border-radius: 6px; color: #343a40; outline: none; cursor: pointer;">
+            <option value="">Select difficulty</option>
+            <option *ngFor="let level of difficultyLevels" [value]="level">{{level}}</option>
+          </select>
+          <small *ngIf="gameForm.get('difficultyLevel')?.invalid && gameForm.get('difficultyLevel')?.touched" class="text-danger">
+            Please select difficulty level
+          </small>
+        </div>
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 12px;">
+          <button type="button" class="cancel-btn" (click)="modal.dismiss()" style="padding: 8px 16px; border: 1px solid #6c757d; background-color: white; color: #6c757d; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Cancel</button>
+          <button type="submit" class="submit-btn" [disabled]="gameForm.invalid || isLoading" style="padding: 8px 16px; border: none; background-color: #2596be; color: white; border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+            <span *ngIf="!isLoading">{{ isEditMode ? 'Update' : 'Create' }}</span>
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Delete Confirmation Modal Template -->
+<ng-template #deleteModal let-modal>
+  <div class="delete-modal-container" style="background-color: white; border-radius: 10px; max-width: 500px; width: 100%;">
+    <div class="modal-header" style="padding: 16px; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center;">
+      <h5 class="modal-title" style="margin: 0; color: #343a40; font-weight: 600;">Confirm Delete</h5>
+      <button type="button" class="close-btn" (click)="modal.dismiss()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6c757d;">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 16px;">
+      <p style="margin: 0; color: #343a40;">Are you sure you want to delete this game?</p>
+    </div>
+    <div class="modal-footer" style="padding: 16px; border-top: 1px solid #e9ecef; display: flex; justify-content: flex-end; gap: 12px;">
+      <button type="button" class="cancel-btn" (click)="modal.dismiss()" style="padding: 8px 16px; border: 1px solid #6c757d; background-color: white; color: #6c757d; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Cancel</button>
+      <button type="button" class="delete-confirm-btn" (click)="deleteGame()" style="padding: 8px 16px; border: none; background-color: #dc3545; color: white; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Delete</button>
+    </div>
+  </div>
+</ng-template>
+
+<style>
+  /* Hover effects */
+  .add-game-btn:hover {
+    background-color: #1e7a9c !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(37, 150, 190, 0.3);
+  }
+
+  .game-row:hover {
+    background-color: #f8f9fa !important;
+  }
+
+  .edit-btn:hover {
+    background-color: #2596be !important;
+    color: white !important;
+  }
+
+  .delete-btn:hover {
+    background-color: #dc3545 !important;
+    color: white !important;
+  }
+
+  .cancel-btn:hover {
+    background-color: #f8f9fa !important;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    background-color: #1e7a9c !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(37, 150, 190, 0.3);
+  }
+
+  .delete-confirm-btn:hover {
+    background-color: #c82333 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+  }
+
+  /* Disabled state */
+  .submit-btn:disabled {
+    background-color: #a0d1e6 !important;
+    cursor: not-allowed;
+  }
+
+  /* Focus states */
+  .search-input:focus,
+  .filter-select:focus,
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #2596be !important;
+    box-shadow: 0 0 0 2px rgba(37, 150, 190, 0.2) !important;
+  }
+</style>

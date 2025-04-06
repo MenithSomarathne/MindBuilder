@@ -1,0 +1,153 @@
+<aside class="sidebar bg-dark text-white position-sticky top-0 overflow-hidden"
+       [class.collapsed]="collapsed">
+  <div class="sidebar-sticky d-flex flex-column h-100">
+    <!-- Brand Logo/Name -->
+    <div class="sidebar-brand d-flex align-items-center justify-content-between p-4">
+      <div class="d-flex align-items-center">
+        <div class="logo-icon bg-primary rounded-circle d-flex align-items-center justify-content-center"
+             style="width: 36px; height: 36px;">
+          <i class="bi bi-joystick fs-5 text-white"></i>
+        </div>
+        <span class="ms-3 fw-bold text-white" style="font-size: 1.1rem; letter-spacing: 0.5px;">MindBuilder</span>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="flex-grow-1 overflow-auto">
+      <ul class="nav flex-column px-2">
+        <!-- Dashboard -->
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center py-3 px-3 rounded-3"
+             routerLink="/admin"
+             routerLinkActive="active"
+             [routerLinkActiveOptions]="{exact: true}">
+            <div class="icon-container">
+              <i class="bi bi-speedometer2 fs-5"></i>
+            </div>
+            <span class="ms-3">Dashboard</span>
+            <span class="badge bg-primary rounded-pill ms-auto">3</span>
+          </a>
+        </li>
+
+        <!-- Students - Only show if not student and not parent -->
+        <li class="nav-item" *ngIf="isParent||isAdmin||isTeacher">
+          <a class="nav-link d-flex align-items-center py-3 px-3 rounded-3"
+             routerLink="/admin/students"
+             routerLinkActive="active">
+            <div class="icon-container">
+              <i class="bi bi-mortarboard fs-5"></i>
+            </div>
+            <span class="ms-3">Students</span>
+          </a>
+        </li>
+
+        <!-- Teachers - Only show if not student and not parent -->
+        <li class="nav-item" *ngIf="!isStudent && !isParent && !isTeacher">
+          <a class="nav-link d-flex align-items-center py-3 px-3 rounded-3"
+             routerLink="/admin/teachers"
+             routerLinkActive="active">
+            <div class="icon-container">
+              <i class="bi bi-person-badge fs-5"></i>
+            </div>
+            <span class="ms-3">Teachers</span>
+          </a>
+        </li>
+
+        <!-- Parents - Only show if not student and not parent -->
+        <li class="nav-item" *ngIf="!isStudent && !isParent">
+          <a class="nav-link d-flex align-items-center py-3 px-3 rounded-3"
+             routerLink="/admin/parents"
+             routerLinkActive="active">
+            <div class="icon-container">
+              <i class="bi bi-people fs-5"></i>
+            </div>
+            <span class="ms-3">Parents</span>
+          </a>
+        </li>
+
+        <!-- Content Management Section - Only show if not student and not parent -->
+        <ng-container *ngIf="!isStudent && !isParent">
+          <li class="nav-item mt-4">
+            <div class="px-3 text-uppercase text-white small fw-bold">Content</div>
+          </li>
+          <!-- Lessons -->
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center py-3 px-3 rounded-3"
+               routerLink="/admin/lessons"
+               routerLinkActive="active">
+              <div class="icon-container">
+                <i class="bi bi-journal-bookmark fs-5"></i>
+              </div>
+              <span class="ms-3">Lessons</span>
+            </a>
+          </li>
+
+          <!-- Admin Lessons -->
+          <li class="nav-item" *ngIf="!isTeacher">
+            <a class="nav-link d-flex align-items-center py-3 px-3 rounded-3"
+               routerLink="/admin/admin-lessons"
+               routerLinkActive="active">
+              <div class="icon-container">
+                <i class="bi bi-journal-code fs-5"></i>
+              </div>
+              <span class="ms-3">Admin Lessons</span>
+            </a>
+          </li>
+        </ng-container>
+
+        <!-- IQ Games - Show for all users -->
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center py-3 px-3 rounded-3"
+             routerLink="/admin/games"
+             routerLinkActive="active">
+            <div class="icon-container">
+              <i class="bi bi-puzzle fs-5"></i>
+            </div>
+            <span class="ms-3">IQ Games</span>
+            <span class="badge bg-success rounded-pill ms-auto">New</span>
+          </a>
+        </li>
+
+        <!-- System Section - Only show if not student and not parent -->
+        <ng-container *ngIf="!isStudent && !isParent">
+          <li class="nav-item mt-4">
+            <div class="px-3 text-uppercase small fw-bold text-muted">System</div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center py-3 px-3 rounded-3" href="#">
+              <div class="icon-container">
+                <i class="bi bi-graph-up fs-5"></i>
+              </div>
+              <span class="ms-3">Analytics</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center py-3 px-3 rounded-3" href="#">
+              <div class="icon-container">
+                <i class="bi bi-gear fs-5"></i>
+              </div>
+              <span class="ms-3">Settings</span>
+            </a>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+
+    <!-- User Profile (Bottom) -->
+    <div class="sidebar-footer p-3 border-top border-dark">
+      <div class="d-flex align-items-center">
+        <div class="position-relative">
+          <img src="assets/images/user-avatar.png" alt="User" class="rounded-circle me-3" width="40" height="40">
+          <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-2 border-dark rounded-circle"></span>
+        </div>
+        <div class="d-flex flex-column">
+          <span class="fw-bold text-white">{{ userRole ? userRole : 'User' }}</span>
+          <small class="text-muted">{{ isStudent ? 'Student' : isParent ? 'Parent' : 'User' }}</small>
+        </div>
+        <button class="btn btn-sm btn-icon ms-auto">
+          <i class="bi bi-box-arrow-right text-white-50"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</aside>

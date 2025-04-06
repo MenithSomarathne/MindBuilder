@@ -1,0 +1,249 @@
+<div class="parent-management-container" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4 p-3" style="background-color: #f8f9fa; border-radius: 8px;">
+    <h2 style="color: #343a40; margin: 0; font-weight: 600;">Parent Management</h2>
+    <button class="add-parent-btn" (click)="openAddModal(parentModal)" style="background-color: #2596be; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 500; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
+      <i class="bi bi-plus-circle"></i> Add Parent
+    </button>
+  </div>
+
+  <!-- Card Container -->
+  <div class="card-container" style="background-color: white; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); overflow: hidden;">
+    <!-- Card Header with Search and Filter -->
+    <div class="card-header" style="padding: 16px; border-bottom: 1px solid #e9ecef; background-color: white;">
+      <div class="row" style="display: flex; flex-wrap: wrap; margin: -8px;">
+        <div class="search-col" style="flex: 1; min-width: 200px; padding: 8px;">
+          <input type="text" class="search-input" placeholder="Search parents..." [(ngModel)]="searchText" name="searchText" (input)="applyFilter()" style="width: 100%; padding: 8px 12px; border: 1px solid #e9ecef; border-radius: 6px; color: #343a40; outline: none; transition: border 0.2s;">
+        </div>
+        <div class="filter-col" style="flex: 0 0 auto; padding: 8px;">
+          <select class="filter-select" [(ngModel)]="filterBy" name="filterBy" (change)="applyFilter()" style="padding: 8px 12px; border: 1px solid #e9ecef; border-radius: 6px; color: #343a40; outline: none; cursor: pointer;">
+            <option value="all">All Parents</option>
+            <option value="children">With Children</option>
+            <option value="noChildren">Without Children</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="card-body" style="padding: 0;">
+      <div class="table-responsive" style="overflow-x: auto;">
+        <table class="parent-table" style="width: 100%; border-collapse: collapse;">
+          <thead style="background-color: #f8f9fa;">
+          <tr>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">ID</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Name</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Email</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Children</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let parent of filteredParents" style="border-bottom: 1px solid #e9ecef; transition: background-color 0.2s;" class="parent-row">
+            <td style="padding: 12px 16px; color: #343a40;">{{ parent.id }}</td>
+            <td style="padding: 12px 16px; color: #343a40;">{{ parent.name }}</td>
+            <td style="padding: 12px 16px; color: #2596be; text-decoration: none;">{{ parent.email }}</td>
+            <td style="padding: 12px 16px; color: #343a40;">
+                <span *ngIf="parent.children.length > 0; else noChildren">
+                  {{ parent.children.length }} child<span *ngIf="parent.children.length > 1">ren</span>
+                  <button class="view-children-btn" (click)="viewChildren(parent.id)" style="background-color: transparent; border: none; color: #2596be; cursor: pointer; margin-left: 8px; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem;">
+                    <i class="bi bi-eye"></i> View
+                  </button>
+                </span>
+              <ng-template #noChildren>None</ng-template>
+            </td>
+            <td style="padding: 12px 16px;">
+              <div class="action-buttons" style="display: flex; gap: 8px;">
+                <button class="edit-btn" (click)="openEditModal(parentModal, parent)" style="background-color: transparent; border: 1px solid #2596be; color: #2596be; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px;">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="delete-btn" (click)="confirmDelete(deleteModal, parent.id)" style="background-color: transparent; border: 1px solid #dc3545; color: #dc3545; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px;">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="filteredParents.length === 0">
+            <td colspan="5" style="padding: 24px 16px; text-align: center; color: #6c757d;">No parents found</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Modal Template -->
+<ng-template #parentModal let-modal>
+  <div class="modal-container" style="background-color: white; border-radius: 10px; max-width: 600px; width: 100%;">
+    <div class="modal-header" style="padding: 16px; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center;">
+      <h5 class="modal-title" style="margin: 0; color: #343a40; font-weight: 600;">{{ isEditMode ? 'Edit' : 'Add' }} Parent</h5>
+      <button type="button" class="close-btn" (click)="closeModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6c757d;">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 16px;">
+      <form [formGroup]="parentForm" (ngSubmit)="onSubmit()">
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" style="display: block; margin-bottom: 6px; color: #343a40; font-weight: 500;">Name</label>
+          <input type="text" class="form-control" formControlName="name" style="width: 100%; padding: 8px 12px; border: 1px solid #e9ecef; border-radius: 6px; color: #343a40; outline: none;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" style="display: block; margin-bottom: 6px; color: #343a40; font-weight: 500;">Email</label>
+          <input type="email" class="form-control" formControlName="email" style="width: 100%; padding: 8px 12px; border: 1px solid #e9ecef; border-radius: 6px; color: #343a40; outline: none;">
+        </div>
+        <div class="form-group" style="margin-bottom: 16px;" *ngIf="!isEditMode">
+          <label class="form-label" style="display: block; margin-bottom: 6px; color: #343a40; font-weight: 500;">Password</label>
+          <input type="password" class="form-control" formControlName="password" style="width: 100%; padding: 8px 12px; border: 1px solid #e9ecef; border-radius: 6px; color: #343a40; outline: none;">
+        </div>
+
+        <!-- Add this to your modal-body section, after the other form groups -->
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" style="display: block; margin-bottom: 6px; color: #343a40; font-weight: 500;">Parent Image</label>
+          <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*" style="width: 100%; padding: 8px 0; border: none; color: #343a40; outline: none;">
+
+          <!-- Image preview -->
+          <div *ngIf="imagePreview" style="margin-top: 10px;">
+            <img [src]="imagePreview" alt="Preview" style="max-width: 100px; max-height: 100px; border-radius: 4px;">
+          </div>
+
+          <!-- Current image (for edit mode) -->
+          <div *ngIf="isEditMode && parentForm.value.imgUrl && !imagePreview" style="margin-top: 10px;">
+            <img [src]="parentForm.value.imgUrl" alt="Current Image" style="max-width: 100px; max-height: 100px; border-radius: 4px;">
+            <p style="font-size: 12px; color: #6c757d; margin-top: 4px;">Current image</p>
+          </div>
+
+          <!-- Upload progress -->
+          <div *ngIf="isUploading" style="margin-top: 10px;">
+            <div style="height: 4px; background-color: #e9ecef; border-radius: 2px;">
+              <div [style.width.%]="uploadProgress" style="height: 100%; background-color: #2596be; border-radius: 2px;"></div>
+            </div>
+            <p style="font-size: 12px; color: #6c757d; margin-top: 4px;">Uploading... {{uploadProgress}}%</p>
+          </div>
+        </div>
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 12px;">
+          <button type="button" class="cancel-btn" (click)="closeModal()" style="padding: 8px 16px; border: 1px solid #6c757d; background-color: white; color: #6c757d; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Cancel</button>
+          <button type="submit" class="submit-btn" [disabled]="parentForm.invalid" style="padding: 8px 16px; border: none; background-color: #2596be; color: white; border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+            {{ isEditMode ? 'Update' : 'Register' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Delete Confirmation Modal Template -->
+<ng-template #deleteModal let-modal>
+  <div class="delete-modal-container" style="background-color: white; border-radius: 10px; max-width: 500px; width: 100%;">
+    <div class="modal-header" style="padding: 16px; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center;">
+      <h5 class="modal-title" style="margin: 0; color: #343a40; font-weight: 600;">Confirm Delete</h5>
+      <button type="button" class="close-btn" (click)="closeModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6c757d;">&times;</button>    </div>
+    <div class="modal-body" style="padding: 16px;">
+      <p style="margin: 0; color: #343a40;">Are you sure you want to delete this parent?</p>
+      <p *ngIf="parentToDelete && parentToDelete.children && parentToDelete.children.length > 0" style="margin: 8px 0 0; color: #dc3545; font-size: 0.9rem;">
+        <i class="bi bi-exclamation-triangle"></i> Warning: This parent has {{ parentToDelete.children.length }} associated child<span *ngIf="parentToDelete.children.length > 1">ren</span>.
+      </p>
+    </div>
+    <div class="modal-footer" style="padding: 16px; border-top: 1px solid #e9ecef; display: flex; justify-content: flex-end; gap: 12px;">
+      <button type="button" class="cancel-btn" (click)="modal.dismiss()" style="padding: 8px 16px; border: 1px solid #6c757d; background-color: white; color: #6c757d; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Cancel</button>
+      <button type="button" class="cancel-btn" (click)="closeModal()" style="padding: 8px 16px; border: 1px solid #6c757d; background-color: white; color: #6c757d; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Cancel</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Children View Modal Template -->
+<ng-template #childrenModal let-modal>
+  <div class="modal-container" style="background-color: white; border-radius: 10px; max-width: 800px; width: 100%;">
+    <div class="modal-header" style="padding: 16px; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center;">
+      <h5 class="modal-title" style="margin: 0; color: #343a40; font-weight: 600;">Children of {{ selectedParent?.name }}</h5>
+      <button type="button" class="close-btn" (click)="closeModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6c757d;">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 16px;">
+      <div class="table-responsive" style="overflow-x: auto;">
+        <table class="children-table" style="width: 100%; border-collapse: collapse;">
+          <thead style="background-color: #f8f9fa;">
+          <tr>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">ID</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Name</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Email</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Rank</th>
+            <th style="padding: 12px 16px; text-align: left; color: #343a40; font-weight: 600; border-bottom: 1px solid #e9ecef;">Marks</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let child of selectedParent?.children" style="border-bottom: 1px solid #e9ecef;">
+            <td style="padding: 12px 16px; color: #343a40;">{{ child.id }}</td>
+            <td style="padding: 12px 16px; color: #343a40;">{{ child.name }}</td>
+            <td style="padding: 12px 16px; color: #2596be;">{{ child.email }}</td>
+            <td style="padding: 12px 16px; color: #343a40;">{{ child.studentRank }}</td>
+            <td style="padding: 12px 16px; color: #343a40;">{{ child.totalMarks }}</td>
+          </tr>
+          <tr *ngIf="!selectedParent || !selectedParent.children || selectedParent.children.length === 0">
+            <td colspan="5" style="padding: 24px 16px; text-align: center; color: #6c757d;">No children found</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding: 16px; border-top: 1px solid #e9ecef; display: flex; justify-content: flex-end;">
+      <button type="button" class="close-btn" (click)="closeModal()" style="padding: 8px 16px; border: none; background-color: #2596be; color: white; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Close</button>
+    </div>
+  </div>
+</ng-template>
+
+<style>
+  /* Hover effects */
+  .add-parent-btn:hover {
+    background-color: #1e7a9c !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(37, 150, 190, 0.3);
+  }
+
+  .parent-row:hover {
+    background-color: #f8f9fa !important;
+  }
+
+  .edit-btn:hover {
+    background-color: #2596be !important;
+    color: white !important;
+  }
+
+  .delete-btn:hover {
+    background-color: #dc3545 !important;
+    color: white !important;
+  }
+
+  .view-children-btn:hover {
+    background-color: #e7f5fb !important;
+  }
+
+  .cancel-btn:hover {
+    background-color: #f8f9fa !important;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    background-color: #1e7a9c !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(37, 150, 190, 0.3);
+  }
+
+  .delete-confirm-btn:hover {
+    background-color: #c82333 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+  }
+
+  /* Disabled state */
+  .submit-btn:disabled {
+    background-color: #a0d1e6 !important;
+    cursor: not-allowed;
+  }
+
+  /* Focus states */
+  .search-input:focus,
+  .filter-select:focus,
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #2596be !important;
+    box-shadow: 0 0 0 2px rgba(37, 150, 190, 0.2) !important;
+  }
+</style>
