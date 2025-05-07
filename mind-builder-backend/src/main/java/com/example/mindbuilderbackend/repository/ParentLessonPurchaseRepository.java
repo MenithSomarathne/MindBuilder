@@ -16,4 +16,5 @@ public interface ParentLessonPurchaseRepository extends JpaRepository<ParentLess
 
     @Query("SELECT DISTINCT plp.lesson.lessonId FROM ParentLessonPurchase plp WHERE plp.parent.id = :parentId")
     List<Long> findPurchasedLessonIdsByParentId(@Param("parentId") Long parentId);
+
 }

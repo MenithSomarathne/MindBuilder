@@ -1,16 +1,12 @@
 // LessonService.java
 package com.example.mindbuilderbackend.service;
 
-import com.example.mindbuilderbackend.model.IQGame;
-import com.example.mindbuilderbackend.model.Lesson;
+import com.example.mindbuilderbackend.model.*;
 import com.example.mindbuilderbackend.dto.LessonCreateDTO;
 import com.example.mindbuilderbackend.dto.LessonDTO;
 import com.example.mindbuilderbackend.dto.LessonUpdateDTO;
-import com.example.mindbuilderbackend.model.Teacher;
 import com.example.mindbuilderbackend.model.enums.LessonStatus;
-import com.example.mindbuilderbackend.repository.IQGameRepository;
-import com.example.mindbuilderbackend.repository.LessonRepository;
-import com.example.mindbuilderbackend.repository.TeacherRepository;
+import com.example.mindbuilderbackend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,13 +21,20 @@ public class LessonService {
     private final TeacherRepository teacherRepository;
     private final IQGameRepository iqGameRepository;
 
+    private final ParentLessonPurchaseRepository parentLessonPurchaseRepository;
+
+    private final StudentRepository studentRepository;
     @Autowired
     public LessonService(LessonRepository lessonRepository,
                          TeacherRepository teacherRepository,
-                         IQGameRepository iqGameRepository) {
+                         IQGameRepository iqGameRepository,
+                         ParentLessonPurchaseRepository parentLessonPurchaseRepository,
+                         StudentRepository studentRepository) {
         this.lessonRepository = lessonRepository;
         this.teacherRepository = teacherRepository;
         this.iqGameRepository = iqGameRepository;
+        this.parentLessonPurchaseRepository = parentLessonPurchaseRepository;
+        this.studentRepository = studentRepository;
     }
 
     @Transactional(readOnly = true)
@@ -179,5 +182,42 @@ public class LessonService {
         if (dto.getStatus() != null) {
             lesson.setStatus(dto.getStatus());
         }
+    }
+
+    public List<LessonDTO> getLessonsPurchasedByStudentParent(Long studentId) {
+        Student student = studentRepository.findByIdWithParent(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        Parent parent = student.getParent();
+
+        return parentLessonPurchaseRepository.findByParentId(parent.getId())
+                .stream()
+                .map(purchase -> {
+                    Lesson lesson = purchase.getLesson();
+                    return new LessonDTO(
+                            lesson.getLessonId(),
+                            lesson.getTeacher().getId(),        // Added teacherId
+                            lesson.getIqGame().getGameId(),            // Added gameId
+                            lesson.getTitle(),
+                            lesson.getDescription(),
+                            lesson.getPrice(),
+                            lesson.getCurrency(),
+                            lesson.getIsFree(),                        // Added isFree
+                            lesson.getDurationMinutes(),
+                            lesson.getDifficultyLevel(),
+                            lesson.getMinRecommendedAge(),             // Added minRecommendedAge
+                            lesson.getMaxRecommendedAge(),             // Added maxRecommendedAge
+                            lesson.getIsActive(),                      // Added isActive
+                            lesson.getCreatedDate(),                   // Added createdDate
+                            lesson.getIsPurchasable(),                 // Added isPurchasable
+                            lesson.getVideoUrl(),                      // Added videoUrl
+                            lesson.getThumbnailUrl(),                  // Added thumbnailUrl
+                            lesson.getViewCount(),                     // Added viewCount
+                            lesson.getPurchaseCount(),                 // Added purchaseCount
+                            lesson.getVersion(),                       // Added version
+                            lesson.getStatus()                         // Added status
+                    );
+                })
+                .collect(Collectors.toList());
     }
 }

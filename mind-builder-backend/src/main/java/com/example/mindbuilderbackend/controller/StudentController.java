@@ -1,7 +1,9 @@
 package com.example.mindbuilderbackend.controller;
 
+import com.example.mindbuilderbackend.dto.LessonDTO;
 import com.example.mindbuilderbackend.dto.RegisterRequest;
 import com.example.mindbuilderbackend.dto.StudentDTO;
+import com.example.mindbuilderbackend.model.Lesson;
 import com.example.mindbuilderbackend.model.Parent;
 import com.example.mindbuilderbackend.model.Student;
 import com.example.mindbuilderbackend.service.ParentService;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,4 +96,8 @@ public class StudentController {
         studentService.deleteStudent(id);
         return ResponseEntity.noContent().build();
     }
+
+
+
+
 }

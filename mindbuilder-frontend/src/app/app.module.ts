@@ -38,6 +38,8 @@ import { MainTeacherComponent } from './components/main-teacher/main-teacher.com
 import { TeacherDashboardComponent } from './components/teacher-dashboard/teacher-dashboard.component';
 import { ParentLessonCardComponent } from './components/parent-lesson-card/parent-lesson-card.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { StudentLessonsCardsComponent } from './components/student-lessons-cards/student-lessons-cards.component';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -68,7 +70,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MainParentComponent,
     MainTeacherComponent,
     TeacherDashboardComponent,
-    ParentLessonCardComponent
+    ParentLessonCardComponent,
+    StudentLessonsCardsComponent
   ],
   imports: [
     BrowserModule,
@@ -89,6 +92,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatSnackBarModule,
   ],
   providers: [
+    provideHttpClient(withFetch())
   ],
   bootstrap: [AppComponent]
 })

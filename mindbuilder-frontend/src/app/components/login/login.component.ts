@@ -1,5 +1,5 @@
 // login.component.ts
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -11,7 +11,7 @@ import { AuthService } from '../../service/auth.service';
   styleUrls: ['./login.component.css'],
   standalone: false
 })
-export class LoginComponent {
+export class LoginComponent{
   loginForm: FormGroup;
   isLoading = false;
 
@@ -26,7 +26,6 @@ export class LoginComponent {
       password: ['', Validators.required]
     });
   }
-
   onSubmit() {
     if (this.loginForm.invalid) {
       return;

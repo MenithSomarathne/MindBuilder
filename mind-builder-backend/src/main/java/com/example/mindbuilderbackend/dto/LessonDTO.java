@@ -1,11 +1,15 @@
 package com.example.mindbuilderbackend.dto;
 
 import com.example.mindbuilderbackend.model.enums.LessonStatus;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class LessonDTO {
     private Long lessonId;
     private Long teacherId;

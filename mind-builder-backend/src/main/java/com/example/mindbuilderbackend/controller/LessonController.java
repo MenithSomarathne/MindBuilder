@@ -52,4 +52,10 @@ public class LessonController {
         lessonService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/student/{studentId}/purchased-by-parent")
+    public ResponseEntity<List<LessonDTO>> getLessonsPurchasedByParent(@PathVariable Long studentId) {
+        List<LessonDTO> lessons = lessonService.getLessonsPurchasedByStudentParent(studentId);
+        return ResponseEntity.ok(lessons);
+    }
 }

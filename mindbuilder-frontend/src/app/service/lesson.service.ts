@@ -46,6 +46,12 @@ export class LessonService {
     );
   }
 
+  getLessonsPurchasedByParent(studentId: number): Observable<LessonDTO[]> {
+    return this.http.get<LessonDTO[]>(`${this.apiUrl}/student/${studentId}/purchased-by-parent`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   // Error handling
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unknown error occurred!';

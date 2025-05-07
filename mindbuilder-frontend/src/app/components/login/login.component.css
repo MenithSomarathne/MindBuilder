@@ -107,3 +107,17 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* Additional custom styles if needed */
+:host {
+  display: block;
+  height: 100vh;
+}
+
+/* Background with image and gradient */
+.bg-with-image {
+  background: linear-gradient(to bottom right, #0891B2, #0D9488, #1E3A8A),
+  url('/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  background-blend-mode: overlay;
+}
